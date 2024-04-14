@@ -1,5 +1,7 @@
 import requests
 
+favorite_countries = set()
+
 
 # Returns a list of all continents in a format compatible with the REST Countries API.
 def continents():
@@ -44,7 +46,6 @@ def country_info(country_name: str) -> dict:
     # Construct the URL for the API request by appending the continent name to the base region URL.
     COUNTRY_URL = f"https://restcountries.com/v3.1/name/{country_name}"
     try:
-
         response = requests.get(
             COUNTRY_URL
         )  # Send a GET request to the constructed URL.
@@ -55,7 +56,6 @@ def country_info(country_name: str) -> dict:
         capital = (
             data.get("capital", ["Unknown"])[0] if data.get("capital") else "Unknown"
         )
-
         # Get relevant fields from data, default to "Unknown"
         population = data.get("population", "Unknown")
         area = data.get("area", "Unknown")
@@ -98,13 +98,51 @@ def temperature(country_name: str) -> float:
     return temperature
 
 
-def favorite(country_name: str):
-    pass
+def forecast(country_name: str, days: int) -> list:
+    country_details = country_info(country_name)
+    lat = country_details["latitude"]
+    lon = country_details["longitude"]
+
+    API_KEY = "f73d2a8ecf1f594a12df4dc1b1df1126"
+    URL = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
+
+    response = requests.get(URL)
+    response.raise_for_status()  # This will raise an exception for HTTP errors
+
+    data = response.json()
+    # Calculate how many 3-hour intervals are there in `n` days
+    forecast_limit = 8 * days  # there are 8 intervals of 3 hours in one day
+
+    forecasts = []
+    for i in range(min(forecast_limit, len(data["list"]))):
+        forecast_entry = data["list"][i]
+        forecasts.append(
+            {
+                "time": forecast_entry["dt_txt"],
+                "temperature": forecast_entry["main"]["temp"],
+            }
+        )
+
+    return forecasts
 
 
-def unfavorite(country_name: str):
-    pass
+def favorite(country_name: str) -> bool:
+    """Mark a country as a favorite."""
+    country_details = country_info(country_name)
+    if country_details:
+        favorite_countries.add(country_name)
+        return True
+    return False
 
 
-def favorites():
-    pass
+def unfavorite(country_name: str) -> bool:
+    """Remove a country from favorites."""
+    if country_name in favorite_countries:
+        favorite_countries.remove(country_name)
+        return True
+    return False
+
+
+def favorites() -> list:
+    """List all favorited countries."""
+    return list(favorite_countries)
