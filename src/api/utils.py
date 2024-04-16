@@ -1,6 +1,12 @@
 import requests
 
 favorite_countries = set()
+API_KEY = None
+
+
+def set_api_key(key: str):
+    global API_KEY
+    API_KEY = key
 
 
 # Returns a list of all continents in a format compatible with the REST Countries API.
@@ -68,7 +74,7 @@ def country_info(country_name: str) -> dict:
             latitude, longitude = ("Unknown", "Unknown")
 
         return {
-            "country": country_name,
+            "name": country_name,
             "capital": capital,
             "population": population,
             "area": area,
@@ -86,7 +92,7 @@ def temperature(country_name: str) -> float:
     lat = country_details["latitude"]
     lon = country_details["longitude"]
 
-    API_KEY = "f73d2a8ecf1f594a12df4dc1b1df1126"
+    global API_KEY
     URL = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
 
     response = requests.get(URL)
@@ -103,7 +109,7 @@ def forecast(country_name: str, days: int) -> list:
     lat = country_details["latitude"]
     lon = country_details["longitude"]
 
-    API_KEY = "f73d2a8ecf1f594a12df4dc1b1df1126"
+    global API_KEY
     URL = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
 
     response = requests.get(URL)
@@ -128,21 +134,24 @@ def forecast(country_name: str, days: int) -> list:
 
 def favorite(country_name: str) -> bool:
     """Mark a country as a favorite."""
+    global favorite_countries
     country_details = country_info(country_name)
     if country_details:
-        favorite_countries.add(country_name)
+        favorite_countries.add(country_name.title())
         return True
     return False
 
 
 def unfavorite(country_name: str) -> bool:
     """Remove a country from favorites."""
+    global favorite_countries
     if country_name in favorite_countries:
-        favorite_countries.remove(country_name)
+        favorite_countries.remove(country_name.title())
         return True
     return False
 
 
 def favorites() -> list:
     """List all favorited countries."""
+    global favorite_countries
     return list(favorite_countries)
