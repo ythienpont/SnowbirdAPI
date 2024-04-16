@@ -9,6 +9,7 @@ parser.add_argument("--api-key", type=str, required=True, help="OpenWeatherMap A
 args = parser.parse_args()
 set_api_key(args.api_key)
 
+# Create the Api
 app = Flask(__name__)
 api = Api(
     app,
@@ -17,7 +18,8 @@ api = Api(
     description="An API for sunseekers",
 )
 
+# Add the resources from the namespace
 api.add_namespace(api_namespace, path="/api")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)  # Debug would be false in production

@@ -1,5 +1,6 @@
 import requests
 
+# Global set storing the favorites, will not persist when the api is restarted
 favorite_countries = set()
 API_KEY = None
 

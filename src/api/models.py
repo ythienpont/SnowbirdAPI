@@ -3,6 +3,7 @@ from flask_restx import fields
 from src.api.utils import forecast
 
 
+# The models used for Swagger's API documentation
 def register_models(api_namespace):
     continent_model = api_namespace.model(
         "Continents",

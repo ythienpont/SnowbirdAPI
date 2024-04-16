@@ -13,6 +13,7 @@ from .utils import (
     unfavorite,
 )
 
+# Register the models
 api_namespace = Namespace("Api", description="All API operations")
 models = register_models(api_namespace)
 continent_model = models["continent_model"]
@@ -20,6 +21,8 @@ country_model = models["country_model"]
 favorite_model = models["favorite_model"]
 forecast_model = models["forecast_model"]
 temperature_model = models["temperature_model"]
+
+# Each resource calls a method from utils. A 404 is returned at any error
 
 
 @api_namespace.route("/continents/<string:continent_name>")
@@ -86,6 +89,7 @@ class ForecastResource(Resource):
             labels = [f["time"] for f in forecasts]
             temps = [f["temperature"] for f in forecasts]
 
+            # Create the request for QuickChart
             chart_config = {
                 "type": "line",
                 "data": {
