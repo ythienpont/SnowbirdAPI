@@ -1,17 +1,17 @@
 # SnowbirdAPI
-## Installation
-```
-chmod +x install.sh
-./install.sh
-source env/bin/activate
-```
+
+## Requirements
+- Python 3.x
 
 ## Usage
 ```
-python3 run.py
+chmod +x *.sh
+./run_api.sh API_KEY
+./run_script.sh
 ```
 
 ## Test
+First you will have to run the API, as it writes away your key to `api_key`
 ```
-python3 -m src.test.test_api.py
+./run_test.sh
 ```
